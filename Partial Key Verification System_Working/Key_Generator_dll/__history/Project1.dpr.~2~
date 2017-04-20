@@ -1,0 +1,73 @@
+library Project1;
+
+// This dll is created using the article originally published by Brandon Staggs,
+// demostrating how to use Partial Serial Number Verification System.
+
+// Link for the article :
+// http://www.brandonstaggs.com/2007/07/26/implementing-a-partial-serial-number-verification-system-in-delphi/
+
+{ Important note about DLL memory management: ShareMem must be the
+  first unit in your library's USES clause AND your project's (select
+  Project-View Source) USES clause if your DLL exports any procedures or
+  functions that pass strings as parameters or function results. This
+  applies to all strings passed to and from your DLL--even those that
+  are nested in records and classes. ShareMem is the interface unit to
+  the BORLNDMM.DLL shared memory manager, which must be deployed along
+  with your DLL. To avoid using BORLNDMM.DLL, pass string information
+  using PChar or ShortString parameters. }
+
+uses
+  System.SysUtils,
+  System.Classes;
+
+{$R *.res}
+
+function PKV_GetChecksum(const s: String): String;
+var
+  left, right, sum: Word;
+  i: Integer;
+begin
+  left := $0056;
+  right := $00AF;
+  if Length(s) > 0 then
+    for i := 1 to Length(s) do
+    begin
+      right := right + Byte(s[i]);
+      if right > $00FF then
+        Dec(right, $00FF);
+      Inc(left, right);
+      if left > $00FF then
+        Dec(left, $00FF);
+    end;
+  sum := (left shl 8) + right;
+  result := IntToHex(sum, 4);
+end;
+
+function PKV_MakeKey(const Seed: Int64;
+  KeyBytes: array of Byte): String;
+var
+  i: Integer;
+begin
+  // Fill KeyBytes with values derived from Seed.
+  // The parameters used here must be extactly the same
+  // as the ones used in the PKV_CheckKey function.
+  // A real key system should use more than four bytes.
+  // the key string begins with a hexidecimal string of the seed
+  result := IntToHex(Seed, 8);
+  // then is followed by hexidecimal strings of each byte in the key
+  for i := 0 to 3 do
+    result := result + IntToHex(KeyBytes[i], 2);
+  // add checksum to key string
+  result := result + PKV_GetChecksum(result);
+  // Add some hyphens to make it easier to type
+  i := Length(result) - 3;
+  while (i > 1) do
+  begin
+    Insert('-', result, i);
+    Dec(i, 4);
+  end;
+end;
+
+exports PKV_GetChecksum, PKV_MakeKey;
+
+end.

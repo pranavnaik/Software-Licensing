@@ -1,0 +1,139 @@
+library Project2;
+
+{ Important note about DLL memory management: ShareMem must be the
+  first unit in your library's USES clause AND your project's (select
+  Project-View Source) USES clause if your DLL exports any procedures or
+  functions that pass strings as parameters or function results. This
+  applies to all strings passed to and from your DLL--even those that
+  are nested in records and classes. ShareMem is the interface unit to
+  the BORLNDMM.DLL shared memory manager, which must be deployed along
+  with your DLL. To avoid using BORLNDMM.DLL, pass string information
+  using PChar or ShortString parameters. }
+
+uses
+  System.SysUtils,
+  System.Classes,
+  System.StrUtils;
+
+const
+  KEY_GOOD = 0;
+  KEY_INVALID = 1;
+  KEY_BLACKLISTED = 2;
+  KEY_PHONY = 3;
+  BL : array[0..0] of String = (
+                                '11111111'
+                               );
+
+{$R *.res}
+
+function PKV_GetChecksum(const s : String) : String;
+var
+  left, right, sum : Word;
+  i : Integer;
+begin
+  left := $0056;
+  right := $00AF;
+  if Length(s) > 0 then
+    for i := 1 to Length(s) do
+    begin
+      right := right + Byte(s[i]);
+      if right > $00FF then
+        Dec(right, $00FF);
+      Inc(left, right);
+      if left > $00FF then
+        Dec(left, $00FF);
+    end;
+  sum := (left shl 8) + right;
+  result := IntToHex(sum, 4);
+end;
+
+function PKV_CheckKeyChecksum(const Key : String) : Boolean;
+var
+  s, c : String;
+begin
+  result := False;
+  // remove cosmetic hypens and normalize case
+  s := UpperCase(StringReplace(Key, '-', '', [rfReplaceAll]));
+  if Length(s) <> 20 then
+    exit; // Our keys are always 20 characters long
+  // last four characters are the checksum
+  c := Copy(s, 17, 4);
+  SetLength(s, 16);
+  // compare the supplied checksum against the real checksum for
+  // the key string.
+  result := c = PKV_GetChecksum(s);
+end;
+
+
+
+function PKV_CheckKey(const S : String) : Integer;
+var
+  Key, kb : String;
+  Seed : Int64;
+  i : Integer;
+  b : Byte;
+begin
+  result := KEY_INVALID;
+  if not PKV_CheckKeyChecksum(S) then
+    exit; // bad checksum or wrong number of characters
+  // remove cosmetic hypens and normalize case
+  Key := UpperCase(StringReplace(S, '-', '', [rfReplaceAll]));
+  // test against blacklist
+  if Length(BL) > 0 then
+    for i := Low(BL) to High(BL) do
+      if StartsStr(BL[i], Key) then
+      begin
+        result := KEY_BLACKLISTED;
+        exit;
+      end;
+  // At this point, the key is either valid or forged,
+  // because a forged key can have a valid checksum.
+  // We now test the "bytes" of the key to determine if it is
+  // actually valid.
+  // When building your release application, use conditional defines
+  // or comment out most of the byte checks!  This is the heart
+  // of the partial key verification system. By not compiling in
+  // each check, there is no way for someone to build a keygen that
+  // will produce valid keys.  If an invalid keygen is released, you
+  // simply change which byte checks are compiled in, and any serial
+  // number built with the fake keygen no longer works.
+  // Note that the parameters used for PKV_GetKeyByte calls MUST
+  // MATCH the values that PKV_MakeKey uses to make the key in the
+  // first place!
+  result := KEY_PHONY;
+  // extract the Seed from the supplied key string
+  if not TryStrToInt64('$' + Copy(Key, 1, 8), Seed) then
+    exit;
+  {$IFDEF KEY00}
+  kb := Copy(Key, 9, 2);
+  b := PKV_GetKeyByte(Seed, 24, 3, 200);
+  if kb <> IntToHex(b, 2) then
+    exit;
+  {$ENDIF}
+  {$IFDEF KEY01}
+  kb := Copy(Key, 11, 2);
+  b := PKV_GetKeyByte(Seed, 10, 0, 56);
+  if kb <> IntToHex(b, 2) then
+    exit;
+  {$ENDIF}
+  {$IFDEF KEY02}
+  kb := Copy(Key, 13, 2);
+  b := PKV_GetKeyByte(Seed, 1, 2, 91);
+  if kb <> IntToHex(b, 2) then
+    exit;
+  {$ENDIF}
+  {$IFDEF KEY03}
+  kb := Copy(Key, 15, 2);
+  b := PKV_GetKeyByte(Seed, 7, 1, 100);
+  if kb <> IntToHex(b, 2) then
+    exit;
+  {$ENDIF}
+  // If we get this far, then it means the key is either good, or was made
+  // with a keygen derived from "this" release.
+  result := KEY_GOOD;
+end;
+
+exports PKV_CheckKey;
+
+
+end.

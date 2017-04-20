@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2016/08/24 15:12:25.000.415,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/07 15:02:05.000.777,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/12 12:03:18.000.124,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/12 16:01:45.000.328,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/14 15:27:02.000.081,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/14 15:31:17.000.054,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/14 15:41:38.000.800,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/14 16:44:22.000.519,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/20 14:38:19.000.592,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/21 10:55:27.000.468,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/22 12:23:17.000.521,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/24 15:18:26.000.842,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/29 15:14:39.000.283,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2016/09/29 15:20:04.000.777,C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\User\Documents\Embarcadero\Studio\Projects\License generator_v1.0\Unit1.pas</Transaction>
+    <Transaction>2016/09/29 15:20:04.000.778,C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Users\User\Documents\Embarcadero\Studio\Projects\License generator_v1.0\Unit1.dfm</Transaction>
+    <Transaction>2016/09/29 15:20:06.000.104,C:\Users\User\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\User\Documents\Embarcadero\Studio\Projects\License generator_v1.0\Project1.dproj</Transaction>
+    <Transaction>2016/09/29 16:35:28.000.329,=C:\Users\User\Documents\Embarcadero\Studio\Projects\License generator_v1.0\Project1.dll</Transaction>
+    <Transaction>2016/09/29 16:35:45.000.248,C:\Users\User\Documents\Embarcadero\Studio\Projects\License generator_v1.0\Project1.dll=</Transaction>
+  </Transactions>
+</BorlandProject>
